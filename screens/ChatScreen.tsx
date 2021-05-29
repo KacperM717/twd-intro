@@ -9,6 +9,7 @@ import {
   GiftedChatProps,
   IMessage,
   InputToolbar,
+  Send,
 } from "react-native-gifted-chat";
 import { client } from "../api";
 import { SEND_MESSAGE, SEND_USER_TYPING } from "../api/mutation";
@@ -24,6 +25,7 @@ import { AuthStackParams, Message } from "../types";
 import giftedMapper from "../utils/giftedChatMapper";
 
 import SendIcon from "../assets/images/svg/send.svg";
+import { TouchableHighlight } from "react-native-gesture-handler";
 
 export function ChatScreen({
   navigation,
@@ -87,6 +89,7 @@ export function ChatScreen({
       renderChatFooter={renderFooter}
       renderInputToolbar={renderToolbar}
       renderComposer={renderComposer}
+      renderSend={renderSend}
     />
   );
 }
@@ -151,8 +154,7 @@ function renderToolbar(props: GiftedChatProps) {
         borderTopLeftRadius: 12,
         borderTopRightRadius: 12,
       }}
-      renderActions={(props) => null}
-      renderSend={(props) => <SvgIcon xml={SendIcon} />}
+      renderActions={() => null}
     />
   );
 }
@@ -170,5 +172,20 @@ function renderComposer(props: GiftedChatProps) {
         borderBottomWidth: 0,
       }}
     />
+  );
+}
+
+function renderSend(props: GiftedChatProps) {
+  return (
+    <Send
+      {...props}
+      containerStyle={
+        {
+          /*Empty to reset*/
+        }
+      }
+    >
+      <SvgIcon xml={SendIcon} />
+    </Send>
   );
 }
