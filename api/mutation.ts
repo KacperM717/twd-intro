@@ -19,7 +19,10 @@ export const SEND_MESSAGE = gql`
 export const SEND_USER_TYPING = gql`
   mutation TypingUser($roomId: String!) {
     typingUser(roomId: $roomId) {
+      id
       firstName
+      lastName
+      profilePic
     }
   }
 `;

@@ -11,9 +11,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as AbsintheSocket from "@absinthe/socket";
 // @ts-ignore
 import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
-import { Socket as PhoenixSocket } from "phoenix";
-// import Cookies from "js-cookie";
+import PhoenixSocket from "../utils/phoenixAsyncSocket";
 
+// API KEYS
 const HTTP_URL = "https://chat.thewidlarzgroup.com/api/graphql";
 const WS_URL = "wss://chat.thewidlarzgroup.com/socket";
 
