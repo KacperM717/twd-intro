@@ -8,9 +8,10 @@ import PhoneIcon from "../../assets/images/svg/phone.svg";
 import CameraIcon from "../../assets/images/svg/videocall.svg";
 
 import styles from "./styles";
+import lastActivity from "../../utils/lastActivity";
 
 export default function ChatHeader(props: any) {
-  const { roomPic, name } = props.scene.descriptor.options;
+  const { roomPic, name, lastMessageTime } = props.scene.descriptor.options;
   return (
     <SafeAreaView style={styles.container}>
       <Avatar url={roomPic} size="small" />
@@ -19,7 +20,7 @@ export default function ChatHeader(props: any) {
           {name}
         </Text>
         <Text style={styles.smallText} numberOfLines={1}>
-          Ative Now (Todo)
+          Active {lastActivity(lastMessageTime)}
         </Text>
       </View>
 

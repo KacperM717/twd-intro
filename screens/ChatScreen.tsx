@@ -38,8 +38,9 @@ export function ChatScreen({
     variables: { roomId },
     onCompleted: (data) => {
       const { id, name, roomPic, messages } = data.room;
+      const lastMessageTime = messages[messages.length - 1].insertedAt;
       setMessages(messages);
-      navigation.setOptions({ name, roomPic } as any);
+      navigation.setOptions({ name, roomPic, lastMessageTime } as any);
     },
     fetchPolicy: "cache-and-network",
   });
