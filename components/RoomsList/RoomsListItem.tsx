@@ -1,11 +1,12 @@
 import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { RoomListItemProps } from "../../types";
+import lastActivity from "../../utils/lastActivity";
 import Avatar from "../Avatar";
 
 export default function RoomsListItem({ data, onPress }: RoomListItemProps) {
   const { name, roomPic, messages } = data;
-  const lastMessage = { body: "TODO", insertedAt: "TODO" };
+  const lastMessage = messages[messages.length - 1];
 
   const handlePress = () => {
     // TODO as well
@@ -24,7 +25,7 @@ export default function RoomsListItem({ data, onPress }: RoomListItemProps) {
             {lastMessage.body}
           </Text>
         </View>
-        <Text style={styles.time}>{lastMessage.insertedAt}</Text>
+        <Text style={styles.time}>{lastActivity(lastMessage.insertedAt)}</Text>
       </View>
     </TouchableOpacity>
   );

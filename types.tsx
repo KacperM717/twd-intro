@@ -34,6 +34,7 @@ export type Room = {
   name: string;
   roomPic: string;
   user: User;
+  seenMessage?: Message | null;
 };
 
 export type Message = {
@@ -64,3 +65,34 @@ export type AvatarProps = {
   url?: string;
   size?: IconSize;
 };
+
+/**
+ * Chat Context
+ */
+export type ChatState = {
+  rooms: Room[];
+};
+
+export type ChatDispatch = (actions: ChatAction) => void;
+
+export type ChatAction =
+  | {
+      type: "updateLastSeen";
+      payload: { roomId: string; message: Message };
+    }
+  | {
+      type: "setRooms";
+      payload: Room[];
+    }
+  | {
+      type: "setRoom";
+      payload: Room;
+    }
+  | {
+      type: "shiftRoomMessages";
+      payload: { roomId: string; messages: Message[] };
+    }
+  | {
+      type: "pushRoomMessages";
+      payload: { roomId: string; messages: Message[] };
+    };
