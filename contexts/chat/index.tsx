@@ -5,6 +5,7 @@ import { client } from "../../api";
 import { GET_ROOM, GET_USER_ROOMS } from "../../api/query";
 import { ChatDispatch, ChatState, Room } from "../../types";
 import chatReducer from "./reducer";
+import { SEEN_MESSAGE } from "../../constants/storage";
 
 const ChatContext =
   createContext<[ChatState, ChatDispatch] | undefined>(undefined);
@@ -22,10 +23,9 @@ function ChatProvider({ children }: any) {
           .query({ query: GET_ROOM, variables: { roomId } })
           .then(async (data: any) => {
             const { room } = data.data;
-            const cachedRoom = await AsyncStorage.getItem(room.id);
-            const seenMessage = cachedRoom
-              ? JSON.parse(cachedRoom).seenMessage
-              : null;
+            const cached = await AsyncStorage.getItem(SEEN_MESSAGE + room.id);
+            const seenMessage = cached ? JSON.parse(cached) : null;
+            console.log("SEEN MSG", seenMessage);
             dispatch({ type: "setRoom", payload: { ...room, seenMessage } });
           });
         // await client
@@ -44,7 +44,16 @@ function ChatProvider({ children }: any) {
   });
 
   useEffect(() => {
-    // TODO: update AsyncStorage on unmounting
+    return () => {
+      console.log("WRITING");
+      state.rooms.forEach((room) => {
+        if (!room.seenMessage) return;
+        AsyncStorage.setItem(
+          SEEN_MESSAGE + room.id,
+          room.seenMessage.toString()
+        );
+      });
+    };
   }, []);
 
   return (
