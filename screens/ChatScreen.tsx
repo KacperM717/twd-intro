@@ -25,7 +25,6 @@ import { AuthStackParams, Message } from "../types";
 import giftedMapper from "../utils/giftedChatMapper";
 
 import SendIcon from "../assets/images/svg/send.svg";
-import { TouchableHighlight } from "react-native-gesture-handler";
 
 export function ChatScreen({
   navigation,

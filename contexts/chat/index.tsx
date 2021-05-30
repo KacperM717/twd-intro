@@ -25,7 +25,6 @@ function ChatProvider({ children }: any) {
             const { room } = data.data;
             const cached = await AsyncStorage.getItem(SEEN_MESSAGE + room.id);
             const seenMessage = cached ? JSON.parse(cached) : null;
-            console.log("SEEN MSG", seenMessage);
             dispatch({ type: "setRoom", payload: { ...room, seenMessage } });
           });
         // await client
@@ -45,7 +44,6 @@ function ChatProvider({ children }: any) {
 
   useEffect(() => {
     return () => {
-      console.log("WRITING");
       state.rooms.forEach((room) => {
         if (!room.seenMessage) return;
         AsyncStorage.setItem(
