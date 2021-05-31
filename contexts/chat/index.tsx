@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useQuery, useSubscription } from "@apollo/client";
 import React, { createContext, useEffect, useReducer, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { client } from "../../api";
@@ -6,6 +6,7 @@ import { GET_ROOM, GET_USER_ROOMS } from "../../api/query";
 import { ChatDispatch, ChatState, Room } from "../../types";
 import chatReducer from "./reducer";
 import { SEEN_MESSAGE } from "../../constants/storage";
+import { SUBSCRIBE_ROOM_MESSAGE } from "../../api/subscription";
 
 const ChatContext =
   createContext<[ChatState, ChatDispatch] | undefined>(undefined);
@@ -27,17 +28,20 @@ function ChatProvider({ children }: any) {
             const seenMessage = cached ? JSON.parse(cached) : null;
             dispatch({ type: "setRoom", payload: { ...room, seenMessage } });
           });
-        // await client
-        //   .subscribe({
-        //     query: SUBSCRIBE_ROOM_MESSAGE,
-        //     variables: { roomId },
-        //   })
-        //   .map((data) =>
-        //     dispatch({
-        //       type: "pushRoomMessages",
-        //       payload: { roomId, messages: [data] },
-        //     })
-        //   );
+        client
+          .subscribe({
+            query: SUBSCRIBE_ROOM_MESSAGE,
+            variables: { roomId },
+          })
+          .subscribe({
+            next(data: any) {
+              const message = data.data.messageAdded;
+              dispatch({
+                type: "pushRoomMessages",
+                payload: { roomId, messages: [message] },
+              });
+            },
+          });
       });
     },
   });
