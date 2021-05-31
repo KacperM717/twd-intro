@@ -30,20 +30,32 @@ export function ChatScreen({
   const [chatState, chatDispatch] = useChat();
 
   const room = chatState.rooms.find((room) => room.id === roomId);
-  if (!room) return navigation.navigate("Rooms");
+  if (!room) {
+    navigation.navigate("Rooms");
+    return null;
+  }
 
   const { name, roomPic, messages } = room;
-  const lastMessageTime =
-    messages.length > 0 ? messages[messages.length - 1].insertedAt : null;
+  const lastMessage =
+    messages.length > 0 ? messages[messages.length - 1] : null;
 
   const { user } = client.readQuery({ query: GET_USER });
 
-  const [sendMessage] = useMutation(SEND_MESSAGE);
-  const [sendTyping] = useMutation(SEND_USER_TYPING);
+  useEffect(() => {
+    navigation.setOptions({
+      name,
+      roomPic,
+      lastMessageTime: lastMessage?.insertedAt,
+    } as any);
+  }, [room]);
 
   useEffect(() => {
-    navigation.setOptions({ name, roomPic, lastMessageTime } as any);
-  }, [room]);
+    if (!lastMessage) return;
+    chatDispatch({
+      type: "updateLastSeen",
+      payload: { roomId, message: lastMessage },
+    });
+  }, [messages]);
 
   // useSubscription(SUBSCRIBE_ROOM_TYPING, {
   //   variables: { roomId },
@@ -51,6 +63,9 @@ export function ChatScreen({
   //     console.log("TYPING", data);
   //   },
   // });
+
+  const [sendMessage] = useMutation(SEND_MESSAGE);
+  const [sendTyping] = useMutation(SEND_USER_TYPING);
 
   const handleSend = (messages: IMessage[]) => {
     const { text: body } = messages[0];

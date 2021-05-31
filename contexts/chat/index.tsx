@@ -7,6 +7,7 @@ import { ChatDispatch, ChatState, Room } from "../../types";
 import chatReducer from "./reducer";
 import { SEEN_MESSAGE } from "../../constants/storage";
 import { SUBSCRIBE_ROOM_MESSAGE } from "../../api/subscription";
+import { AppState, AppStateStatus } from "react-native";
 
 const ChatContext =
   createContext<[ChatState, ChatDispatch] | undefined>(undefined);
@@ -24,9 +25,14 @@ function ChatProvider({ children }: any) {
           .query({ query: GET_ROOM, variables: { roomId } })
           .then(async (data: any) => {
             const { room } = data.data;
-            const cached = await AsyncStorage.getItem(SEEN_MESSAGE + room.id);
-            const seenMessage = cached ? JSON.parse(cached) : null;
-            dispatch({ type: "setRoom", payload: { ...room, seenMessage } });
+            const seenMessage = await AsyncStorage.getItem(
+              SEEN_MESSAGE + room.id
+            );
+            const parsed = seenMessage ? JSON.parse(seenMessage) : null;
+            dispatch({
+              type: "setRoom",
+              payload: { ...room, seenMessage: parsed },
+            });
           });
         client
           .subscribe({
@@ -47,16 +53,16 @@ function ChatProvider({ children }: any) {
   });
 
   useEffect(() => {
-    return () => {
-      state.rooms.forEach((room) => {
-        if (!room.seenMessage) return;
-        AsyncStorage.setItem(
-          SEEN_MESSAGE + room.id,
-          room.seenMessage.toString()
-        );
-      });
+    const { rooms } = state;
+    const handler = (status: AppStateStatus) => {
+      if (status !== "background") return;
+      setSeenMessagesToAsyncStorage(rooms);
     };
-  }, []);
+    AppState.addEventListener("change", handler);
+    return () => {
+      AppState.removeEventListener("change", handler);
+    };
+  }, [state]);
 
   return (
     <ChatContext.Provider value={[state, dispatch]}>
@@ -73,3 +79,12 @@ function useChat() {
 }
 
 export { ChatProvider, useChat };
+
+function setSeenMessagesToAsyncStorage(rooms: Room[]) {
+  rooms.forEach((room) => {
+    console.log("SETINGASYNC", room.seenMessage);
+    if (!room.seenMessage) return;
+    const stringified = JSON.stringify(room.seenMessage);
+    AsyncStorage.setItem(SEEN_MESSAGE + room.id, stringified);
+  });
+}
