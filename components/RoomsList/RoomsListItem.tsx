@@ -1,12 +1,15 @@
 import React from "react";
-import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { TouchableHighlight } from "react-native-gesture-handler";
 import { RoomListItemProps } from "../../types";
 import lastActivity from "../../utils/lastActivity";
 import Avatar from "../Avatar";
 
 export default function RoomsListItem({ data, onPress }: RoomListItemProps) {
-  const { name, roomPic, messages } = data;
-  const lastMessage = messages[messages.length - 1];
+  const { name, roomPic, messages, seenMessage } = data;
+  const lastMessage =
+    messages.length > 0 ? messages[messages.length - 1] : null;
+  const unread = lastMessage?.id !== seenMessage?.id;
 
   const handlePress = () => {
     // TODO as well
@@ -14,20 +17,29 @@ export default function RoomsListItem({ data, onPress }: RoomListItemProps) {
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} style={styles.wrapper}>
-      <View style={styles.container}>
+    <TouchableHighlight
+      onPress={handlePress}
+      style={styles.wrapper}
+      underlayColor="rgba(255,255,255,0)"
+    >
+      <View style={[styles.container, unread && styles.unreadContainer]}>
         <Avatar url={roomPic} />
         <View style={styles.content}>
-          <Text style={styles.title} numberOfLines={1}>
+          <Text
+            style={[styles.title, unread && styles.unreadText]}
+            numberOfLines={1}
+          >
             {name}
           </Text>
-          <Text style={styles.desc} numberOfLines={1}>
-            {lastMessage.body}
+          <Text style={[unread && styles.unreadText]} numberOfLines={1}>
+            {lastMessage && lastMessage.body}
           </Text>
         </View>
-        <Text style={styles.time}>{lastActivity(lastMessage.insertedAt)}</Text>
+        <Text style={styles.time}>
+          {lastMessage && lastActivity(lastMessage.insertedAt)}
+        </Text>
       </View>
-    </TouchableOpacity>
+    </TouchableHighlight>
   );
 }
 
@@ -45,6 +57,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
+  unreadContainer: {
+    backgroundColor: "#5603AD",
+  },
   content: {
     flex: 1,
     flexDirection: "column",
@@ -53,7 +68,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 6,
   },
-  desc: {},
+  unreadText: {
+    color: "white",
+  },
   time: {
     fontSize: 10,
     color: "#9FA2B2",

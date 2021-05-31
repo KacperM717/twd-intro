@@ -12,7 +12,7 @@ export default function RoomsHeader(props: any) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.title}>
-        <Text style={{ ...styles.text, ...styles.bigText }}>Rooms</Text>
+        <Text style={styles.bigText}>Rooms</Text>
       </View>
       <View style={styles.menu}>
         <SvgIcon xml={SearchIcon} />

@@ -7,11 +7,14 @@ export default StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#B6DEFD",
-    padding: 12,
 
+    padding: 12,
     paddingTop: 24,
+
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
+
+    marginBottom: 24,
   },
   menu: {
     display: "flex",
