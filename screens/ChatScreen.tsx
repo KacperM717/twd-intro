@@ -1,6 +1,6 @@
 import { useMutation, useSubscription } from "@apollo/client";
 import { StackScreenProps } from "@react-navigation/stack";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Bubble,
   Composer,
@@ -16,11 +16,12 @@ import { GET_USER } from "../api/query";
 import { SUBSCRIBE_ROOM_TYPING } from "../api/subscription";
 import SvgIcon from "../components/Icon";
 import { View, Text } from "../components/Themed";
-import { AuthStackParams, Message } from "../types";
+import { AuthStackParams, User } from "../types";
 import giftedMapper from "../utils/giftedChatMapper";
 
 import SendIcon from "../assets/images/svg/send.svg";
 import { useChat } from "../contexts/chat";
+import Avatar from "../components/Avatar";
 
 export function ChatScreen({
   navigation,
@@ -28,6 +29,7 @@ export function ChatScreen({
 }: StackScreenProps<AuthStackParams, "Chat">) {
   const { roomId } = route.params;
   const [chatState, chatDispatch] = useChat();
+  const [typingUser, setTypingUser] = useState<User | null>(null);
 
   const room = chatState.rooms.find((room) => room.id === roomId);
   if (!room) {
@@ -57,12 +59,22 @@ export function ChatScreen({
     });
   }, [messages]);
 
-  // useSubscription(SUBSCRIBE_ROOM_TYPING, {
-  //   variables: { roomId },
-  //   onSubscriptionData: (data) => {
-  //     console.log("TYPING", data);
-  //   },
-  // });
+  useEffect(() => {
+    if (!typingUser) return;
+    const typingUserTimeout = setTimeout(() => {
+      setTypingUser(null);
+    }, 1000);
+    return () => clearTimeout(typingUserTimeout);
+  }, [typingUser]);
+
+  useSubscription(SUBSCRIBE_ROOM_TYPING, {
+    variables: { roomId },
+    onSubscriptionData: ({ subscriptionData }) => {
+      const { data } = subscriptionData;
+      // if (data.typingUser.id === user.id) return;
+      setTypingUser(data.typingUser);
+    },
+  });
 
   const [sendMessage] = useMutation(SEND_MESSAGE);
   const [sendTyping] = useMutation(SEND_USER_TYPING);
@@ -74,7 +86,8 @@ export function ChatScreen({
     });
   };
 
-  const handleTyping = () => {
+  const handleTyping = (text: string) => {
+    if (!text) return;
     sendTyping({ variables: { roomId } });
   };
 
@@ -83,17 +96,20 @@ export function ChatScreen({
 
   return (
     <GiftedChat
+      isTyping={!!typingUser}
       user={giftedUser}
       messages={giftedMessages}
       onSend={handleSend}
       onInputTextChanged={handleTyping}
       alwaysShowSend={true}
       inverted={false}
+      scrollToBottom={true}
       renderBubble={renderBubble}
-      renderChatFooter={renderFooter}
       renderInputToolbar={renderToolbar}
       renderComposer={renderComposer}
       renderSend={renderSend}
+      renderFooter={() => renderFooter(typingUser)}
+      renderChatFooter={renderChatFooter}
     />
   );
 }
@@ -135,14 +151,6 @@ function renderBubble(props: GiftedChatProps) {
         },
       }}
     />
-  );
-}
-
-function renderFooter(props: GiftedChatProps) {
-  return (
-    <View {...props}>
-      <Text>TODO: isTyping</Text>
-    </View>
   );
 }
 
@@ -191,5 +199,33 @@ function renderSend(props: GiftedChatProps) {
     >
       <SvgIcon xml={SendIcon} />
     </Send>
+  );
+}
+
+function renderFooter(typingUser: User | null) {
+  if (!typingUser) return null;
+  return (
+    <View
+      style={{
+        position: "relative",
+        backgroundColor: `rgba(0,0,0,0)`,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        bottom: 24,
+      }}
+    >
+      <Avatar url={typingUser.profilePic} size={"small"} />
+      <Text> is typing ...</Text>
+    </View>
+  );
+}
+
+function renderChatFooter() {
+  return (
+    <View>
+      <Text></Text>
+    </View>
   );
 }

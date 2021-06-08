@@ -19,12 +19,11 @@ export const SUBSCRIBE_ROOM_MESSAGE = gql`
 export const SUBSCRIBE_ROOM_TYPING = gql`
   subscription OnUserTyping($roomId: String!) {
     typingUser(roomId: $roomId) {
-      user {
-        id
-        profilePic
-        firstName
-        lastName
-      }
+      id
+      profilePic
+      firstName
+      lastName
+      role
     }
   }
 `;
