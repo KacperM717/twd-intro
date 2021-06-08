@@ -8,7 +8,7 @@ import PhoneIcon from "../../assets/images/svg/phone.svg";
 import CameraIcon from "../../assets/images/svg/videocall.svg";
 
 import styles from "./styles";
-import lastActivity from "../../utils/lastActivity";
+import { twoHoursLate } from "../../utils/dayjs";
 
 export default function ChatHeader(props: any) {
   const { roomPic, name, lastMessageTime } = props.scene.descriptor.options;
@@ -20,7 +20,7 @@ export default function ChatHeader(props: any) {
           {name}
         </Text>
         <Text style={styles.smallText} numberOfLines={1}>
-          Active {lastActivity(lastMessageTime)}
+          Active {twoHoursLate(lastMessageTime)}
         </Text>
       </View>
 

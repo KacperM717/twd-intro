@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { RoomListItemProps } from "../../types";
-import lastActivity from "../../utils/lastActivity";
+import { twoHoursLate } from "../../utils/dayjs";
 import Avatar from "../Avatar";
 
 export default function RoomsListItem({ data, onPress }: RoomListItemProps) {
@@ -36,7 +36,7 @@ export default function RoomsListItem({ data, onPress }: RoomListItemProps) {
           </Text>
         </View>
         <Text style={styles.time}>
-          {lastMessage && lastActivity(lastMessage.insertedAt)}
+          {lastMessage && twoHoursLate(lastMessage.insertedAt)}
         </Text>
       </View>
     </TouchableHighlight>
