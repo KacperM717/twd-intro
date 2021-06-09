@@ -4,11 +4,9 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";
+import { FormActionButtonProps } from "../../types";
 import { Text } from "../Themed";
 
-interface FormActionButtonProps extends TouchableOpacityProps {
-  label: string;
-}
 export default function FormActionButton({
   label,
   ...props

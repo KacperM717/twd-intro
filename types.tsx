@@ -3,6 +3,8 @@
  * https://reactnavigation.org/docs/typescript/
  */
 
+import { TextInputProps, TouchableOpacityProps } from "react-native";
+
 export type RootStackParams = {
   Auth: undefined;
   NonAuth: undefined;
@@ -96,3 +98,23 @@ export type ChatAction =
       type: "pushRoomMessages";
       payload: { roomId: string; messages: Message[] };
     };
+
+// Form
+export interface FormActionButtonProps extends TouchableOpacityProps {
+  label: string;
+}
+
+export interface FormInputProps extends TextInputProps {
+  label: string;
+  error?: string;
+}
+
+// Sign In
+export type SignInFormFields = {
+  email: string;
+  password: string;
+};
+
+export type SignInFormProps = {
+  onSubmit: (fields: SignInFormFields) => any;
+};

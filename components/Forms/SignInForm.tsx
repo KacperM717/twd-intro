@@ -2,17 +2,15 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import FormInput from "./FormInput";
 import FormActionButton from "./FormActionButton";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { SignInFormFields, SignInFormProps } from "../../types";
 
-type FormFields = {
-  email: string;
-  password: string;
-};
-
-export default function SignInForm() {
+export default function SignInForm({ onSubmit }: SignInFormProps) {
   const { handleSubmit, control } = useForm();
 
-  const onSubmit = ({ email, password }: FormFields) => {};
+  const onHandleSubmit = (fields: SignInFormFields) => {
+    onSubmit(fields);
+  };
 
   return (
     <View style={styles.container}>
@@ -43,7 +41,10 @@ export default function SignInForm() {
         )}
       />
 
-      <FormActionButton onPress={handleSubmit(onSubmit)} label={"Sign In"} />
+      <FormActionButton
+        onPress={handleSubmit(onHandleSubmit)}
+        label={"Sign In"}
+      />
     </View>
   );
 }

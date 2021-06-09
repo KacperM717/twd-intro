@@ -1,11 +1,8 @@
 import React from "react";
 import { TextInput, TextInputProps, View, StyleSheet } from "react-native";
+import { FormInputProps } from "../../types";
 import { Text } from "../Themed";
 
-interface FormInputProps extends TextInputProps {
-  label: string;
-  error?: string;
-}
 export default function FormInput({ label, error, ...props }: FormInputProps) {
   return (
     <View style={styles.wrapper}>
