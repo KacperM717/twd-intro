@@ -2,6 +2,7 @@ import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { TODOScreen } from "../../../screens/TODOScreen";
 import { NonAuthStackParams } from "../../../types";
+import { SignInScreen } from "../../../screens/SignInScreen";
 
 const Stack = createStackNavigator<NonAuthStackParams>();
 
@@ -10,7 +11,7 @@ export function NonAuthNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="SignIn"
-        component={TODOScreen}
+        component={SignInScreen}
         options={{ headerTitle: "Sign In" }}
       />
       <Stack.Screen
