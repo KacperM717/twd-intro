@@ -14,7 +14,7 @@ export function RootNavigator() {
 
   if (loading) return <Loader />;
 
-  const authorized = data.user.id;
+  const authorized = data?.user?.id;
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
